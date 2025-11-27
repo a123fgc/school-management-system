@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles/Login.css';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -16,7 +18,6 @@ export default function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-
     const user = mockUsers.find(
       (u) => u.username === username && u.password === password
     );
@@ -30,58 +31,46 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.container}>
-      <h2>🏫 School Management System</h2>
-      <form onSubmit={handleLogin} style={styles.form}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={styles.input}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-        />
-        <button type="submit" style={styles.button}>
-          Login
-        </button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <p>Try: admin / admin123 or teacher / teach123</p>
+    <div className="login-page">
+      <div className="login-card">
+        <h2 className="mb-3">🏫 School Management System</h2>
+
+        <form onSubmit={handleLogin}>
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="d-grid">
+            <button type="submit" className="btn btn-cta btn-lg">
+              Login
+            </button>
+          </div>
+        </form>
+
+        {error && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {error}
+          </div>
+        )}
+
+        <p className="helper-text mt-3">Try: admin / admin123 or teacher / teach123</p>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    textAlign: "center",
-    marginTop: "100px",
-  },
-  form: {
-    display: "inline-block",
-    padding: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    backgroundColor: "#fff",
-  },
-  input: {
-    display: "block",
-    margin: "10px auto",
-    padding: "8px",
-    width: "200px",
-  },
-  button: {
-    marginTop: "10px",
-    padding: "8px 20px",
-    backgroundColor: "#4CAF50",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-};

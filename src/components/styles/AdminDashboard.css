@@ -1,0 +1,535 @@
+/* Base / variables */
+:root{
+  --bg-1: #0b3d91;        /* deep navy */
+  --bg-2: #1967d2;        /* deep blue */
+  --card-bg: rgba(255,255,255,0.06);
+  --glass: rgba(255,255,255,0.02);
+  --accent: #60a5fa;      /* sky blue */
+  --accent-2: #0366d6;    /* strong blue */
+  --text: #eaf4ff;        /* light bluish text */
+  --muted: rgba(234,244,255,0.62);
+  --danger: #ff6b6b;
+  --shadow: 0 10px 30px rgba(6, 18, 42, 0.6);
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+html,body,#root { height: 100%; margin: 0; font-family: Inter, Inter var, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color: var(--text); }
+
+/* Page background (match login gradient) */
+.container {
+  min-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  background-attachment: fixed;
+  gap: 32px;
+  padding: 24px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+  transition: transform 220ms ease, opacity 220ms ease;
+  z-index: 60;
+}
+
+.logo {
+  margin: 0;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.3px;
+  text-align: left;
+  color: var(--text);
+  padding-bottom: 6px;
+}
+
+/* Navigation buttons */
+.nav-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.03);
+  color: var(--muted);
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .18s ease;
+  font-weight: 600;
+  text-align: left;
+}
+
+.nav-button:hover {
+  transform: translateX(6px);
+  color: var(--text);
+  border-color: rgba(43,108,255,0.22);
+  box-shadow: 0 6px 20px rgba(43,108,255,0.06);
+}
+
+.nav-button.active {
+  background: linear-gradient(90deg, rgba(43,108,255,0.14), rgba(79,195,255,0.06));
+  color: var(--text);
+  border: 1px solid rgba(43,108,255,0.2);
+  box-shadow: 0 8px 30px rgba(43,108,255,0.06);
+}
+
+/* Logout - blue theme */
+.logout-button {
+  margin-top: auto;
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  border: none;
+  color: white;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(43,108,255,0.12);
+}
+
+/* Main content / cards */
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start; /* let the panel take the full available width */
+  padding: 24px;
+  min-height: calc(100vh - 48px);
+  width: 100%;
+  position: relative; /* for the toggle to be positioned */
+}
+
+.main-content.expanded {
+  padding-left: 36px;
+  padding-right: 36px;
+  width: 100vw;
+  max-width: 100%;
+}
+
+/* Panels */
+.panel, .home-panel {
+  width: 100%;
+  max-width: none; /* remove the 980px cap so it uses available space */
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: calc(var(--radius) - 4px);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+/* Flicker title to match login */
+.flicker-text {
+  font-size: 3.5rem;
+  align-items: center;
+  color: #00ccff;
+  text-shadow: 0 0 10px #00ccff, 0 0 20px #00ccff;
+  animation: flicker 2s infinite;
+}
+@keyframes flicker {
+            0% { opacity: 1; }
+            5% { opacity: 0.4; }
+            10% { opacity: 1; }
+            15% { opacity: 0.7; }
+            20% { opacity: 1; }
+            25% { opacity: 0.5; }
+            30% { opacity: 1; }
+            100% { opacity: 1; }
+          }
+          .animate-flicker {
+            animation: flicker 2.2s infinite alternate;
+            text-shadow: 0 0 10px rgba(0,255,255,0.6),
+                         0 0 20px rgba(0,255,255,0.4),
+                         0 0 30px rgba(0,255,255,0.2);
+          }
+
+/* Form styling - follow login page inputs */
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.form.teacher-form { grid-template-columns: 1fr; } /* teacher uses single column */
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.input {
+  background: var(--glass);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 10px;
+  padding: 11px 12px;
+  color: var(--text);
+  outline: none;
+  transition: all 160ms ease;
+  width: 100%;
+  font-weight: 600;
+}
+
+.input::placeholder { color: rgba(234,244,255,0.46); font-weight: 500; }
+
+.input:focus {
+  border-color: rgba(43,108,255,0.36);
+  box-shadow: 0 6px 24px rgba(43,108,255,0.06);
+  transform: translateY(-1px);
+}
+
+/* Buttons */
+.button-container {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-button {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 800;
+  box-shadow: 0 10px 30px rgba(43,108,255,0.08);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.add-button:hover { transform: translateY(-2px); }
+
+.delete-button {
+  background: rgba(255,255,255,0.04);
+  color: var(--muted);
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .12s ease;
+  font-weight: 700;
+}
+
+.delete-button:hover {
+  background: rgba(43,108,255,0.12);
+  color: white;
+}
+
+/* Toggle button */
+.toggle-button {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 80;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(6, 18, 42, 0.45);
+  backdrop-filter: blur(6px);
+}
+
+/* small utility */
+.field label { font-size: 12px; color: var(--muted); font-weight: 700; }
+
+/* Responsive: collapse the layout for small screens */
+@media (max-width: 920px) {
+  .container { padding: 12px; gap: 12px; }
+  .sidebar { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; }
+  .main-content { padding: 12px; }
+  .panel { padding: 18px; }
+  .form { grid-template-columns: 1fr; }
+  .button-container { justify-content: stretch; }
+  .nav-button { flex: 1 0 calc(33% - 6px); text-align: center; }
+}
+
+/* tiny polish for dob etc range */
+.input[type="date"] { padding-top: 8px; padding-bottom: 8px; }
+
+/* Sidebar collapse / expand behavior + toggle button */
+.sidebar {
+  width: 260px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(6px);
+  transition: transform 220ms ease, opacity 220ms ease;
+  z-index: 60;
+}
+
+/* Hide/slide the sidebar and make it non-interactive so the main content can take full width */
+.sidebar.collapsed {
+  transform: translateX(-110%);
+  opacity: 0;
+  pointer-events: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+}
+
+/* Small header row in the sidebar so user can close it on small screens */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* close button in sidebar header */
+.collapse-toggle {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.03);
+  color: var(--muted);
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Toggle button to open sidebar (floating on main area) */
+.toggle-button {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 80;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(6, 18, 42, 0.45);
+  backdrop-filter: blur(6px);
+}
+
+/* Make main content use the full viewport width when sidebar collapsed */
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 24px;
+  min-height: calc(100vh - 48px);
+  width: 100%;
+  position: relative; /* for the toggle to be positioned */
+}
+
+.main-content.expanded {
+  padding-left: 36px;
+  padding-right: 36px;
+  width: 100vw;
+  max-width: 100%;
+}
+
+/* Prevent horizontal scroll when sidebar slides in/out */
+html, body { overflow-x: hidden; }
+
+/* Horizontal form row: shown in the screenshot */
+.panel-form-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.03);
+  margin-bottom: 18px;
+}
+
+/* make each field inside the row share available width; modifier classes for narrow fields */
+.panel-form-row .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* flex: 0; */
+  /* min-width: 70px; */
+  width: 125px;
+}
+
+/* narrow fields like age, credits or fixed width input */
+.panel-form-row .field.narrow {
+  flex: 0 0 92px;
+  width: 80px;
+}
+
+/* extra-narrow (small numeric) */
+.panel-form-row .field.xsmall {
+  flex: 0 0 80px;
+  min-width: 52px;
+}
+.panel-form-row .field.narrow1 {
+  flex: 0 0 140px;
+  min-width: 52px;
+}
+
+/* keep consistent input appearance */
+.panel-form-row .input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.03);
+  color: var(--text);
+}
+
+/* select and input styling consistent */
+.panel-form-row select.input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, rgba(255,255,255,0.06) 50%),
+                    linear-gradient(135deg, rgba(255,255,255,0.04) 50%, transparent 50%);
+  background-position: calc(100% - 14px) calc(1em + 2px), calc(100% - 10px) calc(1em + 2px);
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 30px;
+}
+
+/* create button */
+.create-button {
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+  box-shadow: 0 8px 30px rgba(43,108,255,0.06);
+}
+
+/* For cards/panels keep spacing aligned */
+.panel h2 {
+  margin-bottom: 12px;
+  font-size: 1.6rem;
+}
+
+/* responsive: wrap the row on small screens */
+@media (max-width: 920px) {
+  .panel-form-row {
+    flex-wrap: wrap;
+  }
+
+  .panel-form-row .field, .panel-form-row .field.narrow, .panel-form-row .field.xsmall {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+
+  .panel-form-row .field.xsmall { max-width: 140px; }
+}
+
+/* list item actions (edit/delete/chevron) */
+.item-actions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* small rounded icon buttons for edit / delete / chevron */
+.icon-button {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, color .12s ease;
+  color: var(--muted);
+}
+.icon-button:hover {
+  transform: translateY(-2px);
+  color: var(--text);
+  box-shadow: 0 6px 12px rgba(2,8,23,0.24);
+}
+
+/* Yellow edit */
+.icon-button.edit {
+  border-color: rgba(255, 193, 7, 0.12);
+  background: linear-gradient(180deg, rgba(255,193,7,0.04), rgba(255,193,7,0.02));
+  color: #FFD166;
+}
+
+/* Red delete */
+.icon-button.delete {
+  border-color: rgba(255, 107, 107, 0.12);
+  background: linear-gradient(180deg, rgba(255,107,107,0.04), rgba(255,107,107,0.02));
+  color: #FF6B6B;
+}
+
+/* small chevron / more (transparent style) */
+.icon-button.chev {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+}
+
+/* ensure svg icons are sized neatly */
+.icon-button svg { width: 16px; height: 16px; pointer-events: none; }
+
+/* inline edit row */
+.inline-edit {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.inline-edit .input { margin: 0; }
+.inline-actions { display: inline-flex; gap: 8px; align-items: center; }
+
+/* success/confirm style */
+.icon-button.save {
+  background: linear-gradient(90deg, rgba(76, 175, 80, 0.16), rgba(76, 175, 80, 0.06));
+  color: #69F0AE;
+  border-color: rgba(76,175,80,0.12);
+}
+
+.icon-button.cancel {
+  background: transparent;
+  border-color: rgba(255,255,255,0.03);
+  color: var(--muted);
+}
+
+/* Card style for list items */
+.list-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.03);
+  margin-bottom: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* left content uses available width, right actions fixed */
+.list-item > div:first-child { flex: 1 1 auto; }
+.item-actions { display: inline-flex; gap: 8px; align-items: center; }
+
+/* action icon buttons already styled above .icon-button; make sure they sit on the right */
+.item-actions .icon-button { margin-left: 8px; }
+
+/* small meta text */
+.card-meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+/* make buttons inline vertically aligned center */
+.icon-button { display:inline-flex; align-items:center; justify-content:center; }

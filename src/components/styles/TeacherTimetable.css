@@ -1,0 +1,73 @@
+.timetable-container {
+  padding: 20px;
+  background-color: #f9fafc;
+  border-radius: 10px;
+  color: #222;
+}
+
+h2 {
+  text-align: center;
+  color: #2a2a2a;
+}
+
+.note {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Each pair of days (2 per row) */
+.timetable-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Individual day card */
+.timetable-card {
+  flex: 1;
+  min-width: 45%;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.timetable-card h3 {
+  text-align: center;
+  background-color: #2c3e50;
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 6px;
+  text-align: center;
+}
+
+th {
+  background-color: #e9f1ff;
+}
+
+td {
+  background-color: #fff;
+}
+
+/* Responsive - one per row on small screens */
+@media (max-width: 768px) {
+  .timetable-card {
+    min-width: 100%;
+  }
+}

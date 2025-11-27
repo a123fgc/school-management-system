@@ -1,80 +1,58 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./TeacherDashboard.css";
+import "./styles/TeacherDashboard.css";
+import TeacherProfile from "./TeacherProfile";
+import ExaminationPanel from "./ExaminationPanel";
+import TeacherTimetable from "./TeacherTimetable";
+import TeacherAnnouncements from "./TeacherAnnouncements"
+import SettingsPanel from "./SettingsPanel";
+//  no
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
   const [activePanel, setActivePanel] = useState("home");
 
   const [students, setStudents] = useState([
-    { id: 1, name: "Ali Khan", rollNo: "su72-bssem-033", attendance: null, marks: "" },
-    { id: 2, name: "Sara Ahmed", rollNo: "su72-bssem-034", attendance: null, marks: "" },
-    { id: 3, name: "Bilal Hussain", rollNo: "su72-bssem-035", attendance: null, marks: "" },
+    { id: 1, name: "Ali Khan", rollNo: "su72-bssem-033", attendance: 0, totalDays: 0 },
+    { id: 2, name: "Sara Ahmed", rollNo: "su72-bssem-034", attendance: 0, totalDays: 0 },
+    { id: 3, name: "Bilal Hussain", rollNo: "su72-bssem-035", attendance: 0, totalDays: 0 },
   ]);
 
-  // --- Examination Students ---
-  const [examStudents, setExamStudents] = useState([]);
-  const [examName, setExamName] = useState("");
-  const [examRoll, setExamRoll] = useState("");
-  const [examMarks, setExamMarks] = useState("");
+  const handleLogout = () => navigate("/");
 
-  // --- Logout ---
-  const handleLogout = () => {
-    navigate("/"); // Redirect to login page
-  };
-
-  // --- Attendance & Marks ---
+  // ✅ Toggle attendance & update counts
   const toggleAttendance = (id) => {
     setStudents((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? {
-              ...s,
-              attendance: s.attendance === "Present" ? "Absent" : "Present",
-            }
-          : s
-      )
+      prev.map((s) => {
+        if (s.id === id) {
+          const newTotal = s.totalDays + 1;
+          const newPresent = s.attendance + 1;
+          const wasPresent = s.lastMarked === "Present";
+
+          return {
+            ...s,
+            attendance: wasPresent ? s.attendance : newPresent,
+            totalDays: newTotal,
+            lastMarked: wasPresent ? "Absent" : "Present",
+          };
+        }
+        return s;
+      })
     );
   };
 
-  const handleMarksChange = (id, marks) => {
-    setStudents((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, marks } : s))
-    );
-  };
+  // ✅ Calculate individual % and overall average
+  const getAttendancePercentage = (s) =>
+    s.totalDays === 0 ? 0 : ((s.attendance / s.totalDays) * 100).toFixed(1);
 
-  const calculateAttendancePercentage = () => {
-    const total = students.length;
-    const present = students.filter((s) => s.attendance === "Present").length;
-    return total === 0 ? 0 : ((present / total) * 100).toFixed(1);
+  const calculateOverallPercentage = () => {
+    const total = students.reduce((sum, s) => sum + parseFloat(getAttendancePercentage(s)), 0);
+    return (total / students.length).toFixed(1);
   };
 
   const handleSave = () => {
-    alert("✅ Attendance and marks saved!");
+    alert("✅ Attendance data saved!");
     console.log(students);
-  };
-
-  // --- Examination (Add Student) ---
-  const handleAddExamStudent = (e) => {
-    e.preventDefault();
-    if (!examName || !examRoll || !examMarks)
-      return alert("Please fill all fields");
-
-    const newExamStudent = {
-      id: Date.now(),
-      name: examName,
-      rollNo: examRoll,
-      marks: examMarks,
-    };
-
-    setExamStudents([...examStudents, newExamStudent]);
-    setExamName("");
-    setExamRoll("");
-    setExamMarks("");
-  };
-
-  const handleDeleteExamStudent = (id) => {
-    setExamStudents(examStudents.filter((s) => s.id !== id));
   };
 
   // --- Panels ---
@@ -98,7 +76,7 @@ export default function TeacherDashboard() {
                   <th>Roll No</th>
                   <th>Name</th>
                   <th>Attendance</th>
-                  <th>Marks</th>
+                  <th>Progress</th>
                 </tr>
               </thead>
               <tbody>
@@ -107,40 +85,26 @@ export default function TeacherDashboard() {
                     <td>{s.rollNo}</td>
                     <td>{s.name}</td>
                     <td>
-                      <div className="attendance-toggle">
-                        <span
-                          className={`attendance-status ${
-                            s.attendance === "Present"
-                              ? "present-text"
-                              : s.attendance === "Absent"
-                              ? "absent-text"
-                              : ""
+                      <button
+                        className={`toggle-btn ${s.lastMarked === "Present"
+                          ? "present-btn"
+                          : s.lastMarked === "Absent"
+                            ? "absent-btn"
+                            : ""
                           }`}
-                        >
-                          {s.attendance ? s.attendance : "Not Marked"}
-                        </span>
-                        <button
-                          className={`toggle-btn ${
-                            s.attendance === "Present"
-                              ? "present-btn"
-                              : s.attendance === "Absent"
-                              ? "absent-btn"
-                              : ""
-                          }`}
-                          onClick={() => toggleAttendance(s.id)}
-                        >
-                          Mark
-                        </button>
-                      </div>
+                        onClick={() => toggleAttendance(s.id)}
+                      >
+                        {s.lastMarked ? s.lastMarked : "Mark Attendance"}
+                      </button>
                     </td>
                     <td>
-                      <input
-                        type="number"
-                        placeholder="Enter Marks"
-                        value={s.marks}
-                        onChange={(e) => handleMarksChange(s.id, e.target.value)}
-                        className="marks-input"
-                      />
+                      <div className="progress-container">
+                        <div
+                          className="progress-bar"
+                          style={{ width: `${getAttendancePercentage(s)}%` }}
+                        ></div>
+                      </div>
+                      <span className="progress-text">{getAttendancePercentage(s)}%</span>
                     </td>
                   </tr>
                 ))}
@@ -149,13 +113,13 @@ export default function TeacherDashboard() {
 
             <div className="summary">
               <p>
-                📊 Attendance Percentage:{" "}
-                <strong>{calculateAttendancePercentage()}%</strong>
+                📊 Overall Attendance Percentage:{" "}
+                <strong>{calculateOverallPercentage()}%</strong>
               </p>
             </div>
 
             <button className="save-button" onClick={handleSave}>
-              💾 Save Attendance & Marks
+              💾 Save Attendance
             </button>
           </div>
         );
@@ -163,47 +127,36 @@ export default function TeacherDashboard() {
       case "examination":
         return (
           <div className="teacher-panel">
-            <h2>🧾 Examination</h2>
-            <form onSubmit={handleAddExamStudent} className="subject-form">
-              <input
-                type="text"
-                placeholder="Student Name"
-                value={examName}
-                onChange={(e) => setExamName(e.target.value)}
-                className="subject-input"
-              />
-              <input
-                type="text"
-                placeholder="Roll Number"
-                value={examRoll}
-                onChange={(e) => setExamRoll(e.target.value)}
-                className="subject-input"
-              />
-              <input
-                type="number"
-                placeholder="Marks"
-                value={examMarks}
-                onChange={(e) => setExamMarks(e.target.value)}
-                className="subject-input"
-              />
-              <button type="submit" className="add-subject-btn">
-                ➕ Add Student
-              </button>
-            </form>
+            <ExaminationPanel />
+          </div>
+        );
 
-            <ul className="subject-list">
-              {examStudents.map((s) => (
-                <li key={s.id} className="subject-item">
-                  {s.rollNo} - {s.name} | Marks: {s.marks}
-                  <button
-                    onClick={() => handleDeleteExamStudent(s.id)}
-                    className="delete-subject-btn"
-                  >
-                    ❌
-                  </button>
-                </li>
-              ))}
-            </ul>
+      case "profile":
+        return (
+          <div className="teacher-panel">
+            <TeacherProfile />
+          </div>
+        );
+
+      case "timetable":
+        return (
+          <div className="teacher-panel">
+            <TeacherTimetable />
+          </div>
+        );
+
+
+      case "announcements":
+        return (
+          <div className="teacher-panel">
+            <TeacherAnnouncements />
+          </div>
+        );
+
+      case "settings":
+        return (
+          <div className="teacher-panel">
+            <SettingsPanel/>
           </div>
         );
 
@@ -226,11 +179,26 @@ export default function TeacherDashboard() {
         </button>
 
         <button
+          className={`nav-btn ${activePanel === "profile" ? "active" : ""}`}
+          onClick={() => setActivePanel("profile")}
+        >
+          👤 Profile
+        </button>
+
+        <button
           className={`nav-btn ${activePanel === "attendance" ? "active" : ""}`}
           onClick={() => setActivePanel("attendance")}
         >
-          ✅ Mark Attendance
+          ✅ Attendance
         </button>
+
+        <button
+          className={`nav-btn ${activePanel === "timetable" ? "active" : ""}`}
+          onClick={() => setActivePanel("timetable")}
+        >
+          🗓️ Timetable
+        </button>
+
 
         <button
           className={`nav-btn ${activePanel === "examination" ? "active" : ""}`}
@@ -239,13 +207,27 @@ export default function TeacherDashboard() {
           🧾 Examination
         </button>
 
-        {/* 🚪 Logout Button */}
+        <button
+          className={`nav-btn ${activePanel === "announcements" ? "active" : ""}`}
+          onClick={() => setActivePanel("announcements")}
+        >
+          📢 Announcements
+        </button>
+
+
+        <button
+          className={`nav-btn ${activePanel === "settings" ? "active" : ""}`}
+          onClick={() => setActivePanel("settings")}
+        >
+          ⚙️ Settings
+        </button>
+
         <button className="logout-btn" onClick={handleLogout}>
           🚪 Logout
         </button>
       </div>
 
-      {/* Main Content */}
+      {/* Main Panel Area */}
       <div className="teacher-main">{renderPanel()}</div>
     </div>
   );
